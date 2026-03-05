@@ -61,106 +61,6 @@ districtSelect.onchange = () => {
   errorDiv.textContent = "";
 };
 
-/* ===== Institute District & Block Sellection =====*/
-const instDistrictSelect = document.getElementById("inst_dist");
-const instBlockSelect = document.getElementById("inst_block");
-
-const instBlocks = {
-  hazaribag_inst: [
-    "Barhi_inst",
-    "Barkagaon_inst",
-    "Barkatha_inst",
-    "Bishungar_insth",
-    "Churchu_inst",
-    "Dari_inst",
-    "Keredari_inst",
-    "Padma_inst",
-    "Daru_inst",
-    "Ichak_inst",
-    "Tatijhariya_inst",
-    "Katkamdag_inst",
-    "Katkamsandi_inst",
-    "Chauparan_inst",
-    "Sadar H.bag_inst",
-  ],
-  koderma_inst: ["Markacho_inst", "Sadar Koderma_inst"],
-  chatra_inst: [
-    "Tandwa_inst",
-    "Hunterganj_inst",
-    "Gidhor_inst",
-    "Simariya_inst",
-    "Itkhori_inst",
-    "Mayurhand_inst",
-  ],
-  ramgarh_inst: ["Mandu_inst"],
-  latehar_inst: ["Balumath_inst"],
-  palamu_inst: ["Bishrampur_inst", "Untari Road_inst"],
-};
-
-instDistrictSelect.addEventListener("change", function () {
-  const selectedInstDistrict = this.value;
-  instBlockSelect.innerHTML = '<option value="">Select Block</option>'; // Clear previous options
-
-  if (selectedInstDistrict && instBlocks[selectedInstDistrict]) {
-    instBlocks[selectedInstDistrict].forEach((inst_block) => {
-      const option = document.createElement("option");
-      option.value = inst_block;
-      option.textContent = inst_block;
-      instBlockSelect.appendChild(option);
-    });
-  }
-});
-
-/* ===== District & Block Sellection =====*/
-const districtSelect = document.getElementById("exam_district");
-const blockSelect = document.getElementById("exam_block");
-
-const blocks = {
-  hazaribag: [
-    "Barhi",
-    "Barkagaon",
-    "Barkatha",
-    "Bishungarh",
-    "Churchu",
-    "Dari",
-    "Keredari",
-    "Padma",
-    "Daru",
-    "Ichak",
-    "Tatijhariya",
-    "Katkamdag",
-    "Katkamsandi",
-    "Chauparan",
-    "Sadar H.bag",
-  ],
-  koderma: ["Markacho", "Sadar Koderma"],
-  chatra: [
-    "Tandwa",
-    "Hunterganj",
-    "Gidhor",
-    "Simariya",
-    "Itkhori",
-    "Mayurhand",
-  ],
-  ramgarh: ["Mandu"],
-  latehar: ["Balumath"],
-  palamu: ["Bishrampur", "Untari Road"],
-};
-
-districtSelect.addEventListener("change", function () {
-  const selectedDistrict = this.value;
-  blockSelect.innerHTML = '<option value="">Select Block</option>'; // Clear previous options
-
-  if (selectedDistrict && blocks[selectedDistrict]) {
-    blocks[selectedDistrict].forEach((block) => {
-      const option = document.createElement("option");
-      option.value = block;
-      option.textContent = block;
-      blockSelect.appendChild(option);
-    });
-  }
-});
-
 /* Form Validations */
 function validateTenDigits(inputString) {
   const regex = /^\d{10}$/; // Matches exactly 10 digits
@@ -171,13 +71,52 @@ function isNumeric(inputString) {
   return /^\d+$/.test(inputString);
 }
 
+// Getting names of elements with their IDs
+// 1. Declare a GLOBAL object to store the names
+let selectData = {
+  inst_dist: "",
+  inst_block: "",
+  inst: "",
+  exam_dist: "",
+  exam_block: "",
+};
+
+// 2. Short reusable function to get data and update global object
+const updateSelect = (id, key, globalKey) => {
+  const el = document.getElementById(id);
+  el.addEventListener("change", (e) => {
+    const opt = e.target.options[e.target.selectedIndex];
+
+    // Update the global object
+    selectData[globalKey] = opt.dataset[key] || opt.text;
+
+    // Log the global object to see results outside
+    // console.log("Global Data Updated:", selectData);
+  });
+};
+
+// 3. Initialize for your three elements
+updateSelect("inst_dist", "d_name", "inst_dist");
+updateSelect("inst_block", "b_name", "inst_block");
+updateSelect("inst_name", "inst_name", "inst");
+updateSelect("exam_district", "d_name", "exam_dist");
+updateSelect("exam_block", "b_name", "exam_block");
+
+// 4. Access anywhere in your script
+function checkGlobals() {
+  console.log("Current District Name:", selectData.dist);
+}
+
+// Initialize Cashfree (use "sandbox" for testing, "production" for live)
+const cashfree = Cashfree({ mode: "sandbox" });
+
+// Form submission
 document
   .getElementById("submitButton")
   .addEventListener("click", function (event) {
     event.preventDefault(); // Prevent default form submission
 
     //new data
-
     const name = document.getElementById("name").value.trim();
     const f_name = document.getElementById("f_name").value.trim();
     const classs = document.getElementById("class").value.trim();
@@ -193,11 +132,13 @@ document
 
     const inst_type = document.getElementById("inst_type").value.trim();
     const inst_name = document.getElementById("inst_name").value.trim();
-    //const ssse_code = document.getElementById("ssse_code").value.trim();
+    const ssse_code = document.getElementById("ssse_code").value.trim();
 
     const inst_vill = document.getElementById("inst_vill").value.trim();
-    const inst_block = document.getElementById("inst_block").value.trim();
     const inst_dist = document.getElementById("inst_dist").value.trim();
+    const inst_block = document.getElementById("inst_block").value.trim();
+
+    const ssse_incharge = document.getElementById("ssse_incharge").value.trim();
 
     const exam_district = document.getElementById("exam_district").value;
     const exam_block = document.getElementById("exam_block").value;
@@ -236,78 +177,122 @@ document
     document.getElementById("errorMessages").innerHTML = ""; // Clear previous errors
 
     document.getElementById("popupData").innerHTML = `
-                <p>फॉर्म सबमिशन के बाद आपको SSSE-2026 का रजिस्ट्रेशन रिक्वेस्ट फॉर्म का रसीद मिलेगा, उसको सेव कर लें एवं उसमें दिए  गए अनुदेशों को ध्यानपूर्वक पढ़  लें |.</p>
+                <p>फॉर्म सबमिशन के बाद आपको SSSE-2026 का रजिस्ट्रेशन फॉर्म का रसीद मिलेगा, उसको सेव कर लें एवं उसमें दिए  गए अनुदेशों को ध्यानपूर्वक पढ़  लें |.</p>
             `;
     // Show popup
     document.getElementById("confirmationPopup").style.display = "block";
-  });
 
-document.getElementById("backButton").addEventListener("click", function () {
-  // Hide popup
-  document.getElementById("confirmationPopup").style.display = "none";
-});
+    document
+      .getElementById("backButton")
+      .addEventListener("click", function () {
+        // Hide popup
+        document.getElementById("confirmationPopup").style.display = "none";
+      });
 
-document
-  .getElementById("confirmSubmitButton")
-  .addEventListener("click", function () {
-    // Submit the form
-    document.getElementById("myForm").submit();
+    document
+      .getElementById("confirmSubmitButton")
+      .addEventListener("click", function () {
+        // Submit the form
+        //document.getElementById("myForm").submit();
+        //Bind data into a sigle variable
+        const formData = {
+          name: name,
+          f_name: f_name,
+          classs: classs,
+          class_group: class_group,
+          vil_city: vil_city,
+          block: block,
+          district: district,
+          mobile: mobile,
+          whatsapp: whatsapp,
+          aadhar: aadhar,
+          dob: dob,
+          inst_type: inst_type,
+          inst_name: inst_name,
+          ssse_code: ssse_code,
+          inst_vill: inst_vill,
+          inst_dist: inst_dist,
+          inst_block: inst_block,
+          ssse_incharge: ssse_incharge,
+          exam_district: exam_district,
+          exam_block: exam_block,
+
+          dis_inst_name: selectData.inst,
+          dis_inst_dist: selectData.inst_dist,
+          dis_inst_block: selectData.inst_block,
+          dis_exam_district: selectData.exam_dist,
+          dis_exam_block: selectData.exam_block,
+        };
+        console.log(formData);
+        const isNewInst =
+          formData.ssse_code === "Not Applicable" &&
+          formData.ssse_incharge === "Not Applicable";
+
+        if (isNewInst) {
+          console.log("Payment nhi hoga, nya h");
+        } else {
+          //console.log("Payment hoga hi hoga, phle se h");
+          cashfreePayment(formData);
+        }
+      });
+    // fetch to send form data
   });
 
 // Close the popup if the user clicks outside of it.
-window.onclick = function (event) {
+/* window.onclick = function (event) {
   if (event.target == document.getElementById("confirmationPopup")) {
     document.getElementById("confirmationPopup").style.display = "none";
   }
-};
+}; */
 
-/*===== Multi Step Form JS =====*/
-const prevBtns = document.querySelectorAll(".btn-prev");
-const nextBtns = document.querySelectorAll(".btn-next");
-const progress = document.getElementById("progress");
-const formSteps = document.querySelectorAll(".form-step");
-const progressSteps = document.querySelectorAll(".progress-step");
+// Function for payment order
+function cashfreePayment(data) {
+  //1. Create order in php (Send ₹200 & student details)
+  fetch("assets/cashfree/create_order.php", {
+    method: "POST",
+    body: JSON.stringify({ amount: 200, customer_id: data.mobile, ...data }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if (!data.payment_session_id) {
+        alert("Failed to create payment session. Please try again.");
+        return;
+      }
+      //2. Open Cashfree checkout modal
+      let checkoutOptions = {
+        paymentSessionId: data.payment_session_id,
+        redirectTarget: "_modal", // Opens as a popup
+        /* appearance: {
+          width: "425px",
+          height: "700px",
+        }, */
+      };
 
-let formStepsNum = 0;
+      cashfree.checkout(checkoutOptions).then((result) => {
+        if (result.error) {
+          alert("There is some payment error, Check for Payment Status");
+          console.error(result.error);
+        }
+        if (result.redirect) {
+          console.log("Payment will be redirected");
+        }
+        if (result.paymentDetails) {
+          history.pushState(null, null, location.href);
+          window.onpopstate = function () {
+            history.pushState(null, null, location.href);
+          };
 
-nextBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    formStepsNum++;
-    updateFormSteps();
-    updateProgressbar();
-  });
-});
-
-prevBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    formStepsNum--;
-    updateFormSteps();
-    updateProgressbar();
-  });
-});
-
-function updateFormSteps() {
-  formSteps.forEach((formStep) => {
-    formStep.classList.contains("form-step-active") &&
-      formStep.classList.remove("form-step-active");
-  });
-
-  formSteps[formStepsNum].classList.add("form-step-active");
-}
-
-function updateProgressbar() {
-  progressSteps.forEach((progressStep, idx) => {
-    if (idx < formStepsNum + 1) {
-      progressStep.classList.add("progress-step-active");
-    } else {
-      progressStep.classList.remove("progress-step-active");
-    }
-  });
-
-  const progressActive = document.querySelectorAll(".progress-step-active");
-
-  progress.style.width =
-    ((progressActive.length - 1) / (progressSteps.length - 1)) * 100 + "%";
+          window.location.href =
+            "https://elle-noisy-carelessly.ngrok-free.dev/stremax-new/assets/cashfree/verify.html?txnId=" +
+            data.order_id;
+        }
+      });
+    })
+    .catch((err) => {
+      console.error("Error during order creation:", err);
+      alert("Something went wrong. Please try again.");
+    });
 }
 
 // Loading districts from database
@@ -316,128 +301,280 @@ function loadDis() {
   fetch("assets/get_district.php")
     .then((response) => response.json())
     .then((data) => {
-      const inst_dist = document.getElementById("inst_dist");
-      inst_dist.innerHTML = '<option value="">-- Select a District --</option>'; // Clear loading text
+      // Get all district dropdowns by class
+      const districtDropdowns = document.querySelectorAll(".districts");
 
-      data.forEach((district) => {
-        const option = document.createElement("option");
-        option.value = district.d_id; // Use ID as the value
-        option.textContent = district.dname; // Use name for display
-        inst_dist.appendChild(option);
+      // Loop through each district dropdown
+      districtDropdowns.forEach((dropdown) => {
+        dropdown.innerHTML =
+          '<option value="">-- Select a District --</option>';
+
+        data.forEach((district) => {
+          const option = document.createElement("option");
+          option.value = district.d_id;
+          option.textContent = district.dname;
+          option.dataset.d_name = district.dname;
+          dropdown.appendChild(option);
+        });
       });
-      // Add event listener to district dropdown
-      inst_dist.addEventListener("change", function () {
-        const selectedDistrictId = this.value;
-        if (selectedDistrictId) {
-          fetchBlocks(selectedDistrictId);
-        } else {
-          // Clear blocks if no district selected
-          const inst_block = document.getElementById("inst_block");
-          inst_block.innerHTML =
-            '<option value="">-- Select a Block --</option>';
-        }
+
+      // Add event listeners to all district dropdowns
+      districtDropdowns.forEach((dropdown) => {
+        dropdown.addEventListener("change", function () {
+          const selectedDistrictId = this.value;
+          const targetBlockClass = this.dataset.targetBlock || "blocks"; // Get target block class or use default
+
+          if (selectedDistrictId) {
+            fetchBlocks(selectedDistrictId, targetBlockClass);
+          } else {
+            // Clear all block dropdowns if no district selected
+            clearBlockDropdowns(targetBlockClass);
+          }
+        });
       });
     });
 }
 
-loadDis();
+// Clear all block dropdowns
+function clearBlockDropdowns(blockClass) {
+  const blockDropdowns = document.querySelectorAll(`.${blockClass}`);
+  blockDropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = '<option value="">-- Select a Block --</option>';
+    dropdown.disabled = true;
+  });
+}
 
-//Loading blocks from database
-function fetchBlocks(d_id) {
-  const inst_block = document.getElementById("inst_block");
+// Loading blocks from database
+function fetchBlocks(
+  d_id,
+  blockClass = "blocks",
+  instituteClass = "institute",
+) {
+  const blockDropdowns = document.querySelectorAll(`.${blockClass}`);
 
-  // Show loading state
-  inst_block.innerHTML = "<option>-- Loading Blocks --</option>";
+  // Show loading state in all block dropdowns
+  blockDropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = "<option>-- Loading Blocks --</option>";
+    dropdown.disabled = true;
+  });
+
+  // Clear all institute dropdowns
+  //clearInstituteDropdowns(instituteClass);
 
   // Fetch blocks based on selected district
   fetch(`assets/get_block.php?d_id=${d_id}`)
     .then((response) => response.json())
     .then((data) => {
-      // Clear loading text
-      inst_block.innerHTML = '<option value="">-- Select a Block --</option>';
+      // Update all block dropdowns
+      blockDropdowns.forEach((dropdown) => {
+        dropdown.innerHTML = '<option value="">-- Select a Block --</option>';
 
-      if (data.length > 0) {
-        data.forEach((block) => {
-          const option = document.createElement("option");
-          option.value = block.b_id; // Use block ID as value
-          option.textContent = block.bname; // Use block name for display
-          inst_block.appendChild(option);
-          inst_block.disabled = false;
-          // Add event listener to block dropdown
-          inst_block.addEventListener("change", function () {
-            const selectedBlockId = this.value;
-            if (selectedBlockId) {
-              fetchInst(selectedBlockId);
-            } else {
-              // Clear insitute if no block selected
-              const inst_name = document.getElementById("inst_name");
-              inst_name.innerHTML =
-                '<option value="">-- Select a Institute --</option>';
-            }
+        if (data.length > 0) {
+          data.forEach((block) => {
+            const option = document.createElement("option");
+            option.value = block.b_id;
+            option.textContent = block.bname;
+            option.dataset.b_name = block.bname;
+            dropdown.appendChild(option);
           });
+          dropdown.disabled = false;
+        } else {
+          dropdown.innerHTML =
+            '<option value="">-- No Blocks Available --</option>';
+        }
+      });
+
+      // Add event listeners to all block dropdowns
+      blockDropdowns.forEach((dropdown) => {
+        dropdown.addEventListener("change", function () {
+          const selectedBlockId = this.value;
+          const targetInstituteClass =
+            this.dataset.targetInstitute || instituteClass;
+
+          if (selectedBlockId && targetInstituteClass === "institute1") {
+            fetchInst(selectedBlockId, targetInstituteClass);
+          }
         });
-      } else {
-        inst_name.innerHTML =
-          '<option value="">-- No Institute Availabe--</option>';
-      }
+      });
     })
     .catch((error) => {
-      console.error("Error fetching Institutes:", error);
-      inst_name.innerHTML =
-        '<option value="">-- Error Loading Institutes --</option>';
+      console.error("Error fetching blocks:", error);
+      blockDropdowns.forEach((dropdown) => {
+        dropdown.innerHTML =
+          '<option value="">-- Error Loading Blocks --</option>';
+      });
     });
 }
 
-// Loading institutes for db
-function fetchInst(b_id) {
-  const inst_name = document.getElementById("inst_name");
+// Loading institutes from database (new function based on your existing fetchInst)
+function fetchInst(b_id, instituteClass = "institute1") {
+  const instituteDropdowns = document.querySelectorAll(`.${instituteClass}`);
 
   // Show loading state
-  inst_name.innerHTML = "<option>-- Loading Institues --</option>";
+  instituteDropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = "<option>-- Loading Institutes --</option>";
+    dropdown.disabled = true;
+  });
 
-   // Hide custom input field initially
-  document.getElementById("custom_institute_container").style.display = "none";
-  // Fetch Institues based on selected district
+  // Fetch institutes based on selected block
   fetch(`assets/get_inst.php?b_id=${b_id}`)
     .then((response) => response.json())
     .then((data) => {
-      // Clear loading text
-      inst_name.innerHTML = '<option value="">-- Select a Institue --</option>';
+      instituteDropdowns.forEach((dropdown) => {
+        dropdown.innerHTML = '<option value="">-- Select Institute --</option>';
 
-      if (data.length > 0) {
-        data.forEach((institue) => {
-          const option = document.createElement("option");
-          option.value = institue.inst_id; // Use institue ID as value
-          option.textContent = institue.inst_name; // Use institue name for display
-          option.dataset.ssse_code = institue.ssse_code || "";
-          option.dataset.inst_incharge = institue.inst_incharge || "";
-          inst_name.appendChild(option);
-          inst_name.disabled = false;
-          // Add event listener to institue dropdown to get SSSE code & incharge of institute
-          inst_name.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            if (this.value) {
-              displayInstDet(selectedOption.dataset);
-            } else {
-              // Clear insitute if no Inst selected
-              clearInstDet();
-            }
+        if (data.length > 0) {
+          data.forEach((institute) => {
+            const option = document.createElement("option");
+            option.value = institute.inst_id;
+            option.textContent = institute.inst_name;
+            option.dataset.inst_name = institute.inst_name || "";
+            option.dataset.ssse_code = institute.ssse_code || "";
+            option.dataset.inst_incharge = institute.inst_incharge || "";
+
+            // Store additional data if needed
+            option.dataset.address = institute.address || "";
+
+            dropdown.appendChild(option);
           });
+          dropdown.disabled = false;
+
+          // Add "Other" option if needed
+          const otherOption = document.createElement("option");
+          otherOption.value = "other";
+          otherOption.textContent = "-- Other (Add New Institute) --";
+          dropdown.appendChild(otherOption);
+        } else {
+          dropdown.innerHTML =
+            '<option value="">-- No Institutes Available --</option>';
+
+          dropdown.disabled = false;
+          // Add "Other" option even if no institutes
+          const otherOption = document.createElement("option");
+          otherOption.value = "other";
+          otherOption.textContent = "-- Add New Institute --";
+          dropdown.appendChild(otherOption);
+        }
+      });
+
+      // Add change event listeners
+      instituteDropdowns.forEach((dropdown) => {
+        dropdown.addEventListener("change", function () {
+          if (this.value === "other") {
+            // Handle "Other" selection - show custom input
+            const container = document.getElementById(
+              "custom_institute_container",
+            );
+            if (container) container.style.display = "block";
+          } else if (this.value) {
+            // Handle institute selection
+            const container = document.getElementById(
+              "custom_institute_container",
+            );
+            if (container) container.style.display = "none";
+
+            const selectedOption = this.options[this.selectedIndex];
+            if (
+              selectedOption.dataset &&
+              Object.keys(selectedOption.dataset).length > 0
+            ) {
+              displayInstDet(selectedOption.dataset);
+            }
+          }
         });
-      } else {
-        inst_name.innerHTML =
-          '<option value="">-- No Institute Availabe--</option>';
-      }
+      });
     })
     .catch((error) => {
-      console.error("Error fetching Institutes:", error);
-      inst_name.innerHTML =
-        '<option value="">-- Error Loading Institutes --</option>';
+      console.error("Error fetching institutes:", error);
+      instituteDropdowns.forEach((dropdown) => {
+        dropdown.innerHTML =
+          '<option value="">-- Error Loading Institutes --</option>';
+      });
     });
 }
 
 // New function to display complete institute details
 function displayInstDet(data) {
+  document.querySelectorAll(".institute1").value = data.inst_name;
   document.getElementById("ssse_code").value = data.ssse_code;
   document.getElementById("ssse_incharge").value = data.inst_incharge;
 }
+
+// Function to save new institute-------------
+function saveNewInstitute() {
+  const b_id = document.getElementById("inst_block").value;
+  const instituteName = document.getElementById("new_institute_name").value;
+  const instituteAddress = document.getElementById(
+    "new_institute_address",
+  ).value;
+
+  if (!instituteName) {
+    alert("Please enter institute name");
+    return;
+  }
+
+  // Show loading
+  document.getElementById("save_institute_btn").disabled = true;
+  document.getElementById("save_institute_btn").textContent = "Saving...";
+
+  // Send data to server
+  fetch("assets/new_inst.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      b_id: b_id,
+      name: instituteName,
+      address: instituteAddress,
+      // Add other fields as needed
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Institute added successfully!");
+
+        // Add the new institute to dropdown
+        const inst_name = document.getElementById("inst_name");
+        const newOption = document.createElement("option");
+        newOption.value = data.inst_id;
+        newOption.textContent = instituteName;
+        // 1. SET THE DATA ATTRIBUTE (Important: This is what your listener reads)
+        newOption.dataset.inst_name = instituteName;
+        newOption.dataset.ssse_code = "Not Applicable";
+        newOption.dataset.inst_incharge = "Not Applicable";
+
+        // 2. Insert before "Other" option
+        inst_name.insertBefore(newOption, inst_name.lastElementChild);
+
+        // 3. Select the new institute
+        inst_name.value = data.inst_id;
+
+        // 4. TRIGGER THE CHANGE EVENT (This "wakes up" your event listener)
+        inst_name.dispatchEvent(new Event("change"));
+
+        // Hide custom input
+        document.getElementById("custom_institute_container").style.display =
+          "none";
+
+        // Clear form
+        document.getElementById("new_institute_name").value = "";
+        document.getElementById("new_institute_address").value = "";
+      } else {
+        alert("Error: " + data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Failed to save institute");
+    })
+    .finally(() => {
+      document.getElementById("save_institute_btn").disabled = false;
+      document.getElementById("save_institute_btn").textContent =
+        "Save Institute";
+    });
+}
+
+// Initialize on page load
+loadDis();
