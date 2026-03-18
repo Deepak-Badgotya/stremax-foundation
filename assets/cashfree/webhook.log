@@ -1,0 +1,13 @@
+2026-02-28 13:30:11
+{"data":
+{"order":
+{"order_id":"Stremax1772281797726","order_amount":200,"order_currency":"INR","order_tags":
+{"customer_id":"6"}
+},
+
+"payment":{"cf_payment_id":"5114925766332","payment_status":"SUCCESS","payment_amount":200,"payment_currency":"INR","payment_message":"Simulated response message","payment_time":"2026-02-28T17:59:59+05:30","bank_reference":"5114925766332","auth_id":null,
+"payment_method":{"card":{"channel":null,"card_number":"XXXXXXXXXXXX2123","card_network":"visa","card_type":"debit_card","card_sub_type":"R","card_country":"IN","card_bank_name":"KOTAK MAHINDRA BANK"}},"payment_group":"debit_card"},
+
+"customer_details":
+{"customer_name":"Deepak Kumar Bairwa live","customer_id":"6","customer_email":null,"customer_phone":"9672210041"},"payment_gateway_details":{"gateway_name":"CASHFREE","gateway_order_id":"2205219216","gateway_payment_id":"5114925766332","gateway_status_code":null,"gateway_order_reference_id":"null","gateway_settlement":"CASHFREE","gateway_reference_name":null},"payment_offers":null},"event_time":"2026-02-28T18:00:06+05:30","type":"PAYMENT_SUCCESS_WEBHOOK"}
+

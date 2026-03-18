@@ -1,0 +1,2 @@
+// Mysql register insert query 
+INSERT INTO `register`(`regist_no`, `name`, `dob`, `gender`, `age`, `f_name`, `m_name`, `marital_st`, `category`, `diff_abled`, `mobile`, `whatsapp`, `email`, `corresp_add`, `prem_add`) VALUES (10000, 'Deepak Badgotya', '15/09/2002', 'male', 22, 'Shyam', 'Sunita', 'unmarried', 'general', 'no', 9672210041, 9672210041, 'deepak@gmail.com', 'Jaga Colony', 'jaga Colony');

@@ -1,0 +1,2 @@
+[2026-01-09 17:17:16] PAYMENT REQUEST: {"message":"authentication Failed","code":"request_failed","type":"authentication_error"}
+[2026-01-09 17:33:17] PAYMENT REQUEST: {"code":"request_failed","message":"authentication Failed","type":"authentication_error"}

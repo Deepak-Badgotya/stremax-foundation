@@ -1,0 +1,73 @@
+4 table join sql = SELECT `students`.`id`, `institute`.`inst_name`, `block`.`bname`, `district`.`dname`
+FROM `students`
+	, `institute`
+	, `block` 
+	LEFT JOIN `district` ON `block`.`d_id` = `district`.`d_id`;
+
+------------
+php code
+$sql = "SELECT `students`.`id`, `institute`.`inst_name`, `block`.`bname`,`district`.`dname`\n"
+
+. "FROM `students`\n"
+
+. "	, `institute`\n"
+
+. "	, `block` \n"
+
+. "	LEFT JOIN `district` ON `block`.`d_id` = `district`.`d_id`;";
+
+---------
+SQL Query to select all columns of student table to get institute, block, district names 
+SELECT `students`.*, `institute`.`inst_name`, `block`.`bname`, `district`.`dname`
+FROM `students`
+	, `institute`
+	, `block` 
+	LEFT JOIN `district` ON `block`.`d_id` = `district`.`d_id`;
+
+-------------
+AI query 
+SELECT 
+    s.name AS student_name,
+    i.institute_name,
+    b1.block_name AS student_block,
+    d1.district_name AS student_district,
+    b2.block_name AS exam_block,
+    d2.district_name AS exam_district
+FROM 
+    student s
+LEFT JOIN 
+    institute i ON s.institute_id = i.id
+LEFT JOIN 
+    block b1 ON s.block_id = b1.id
+LEFT JOIN 
+    district d1 ON s.district_id = d1.id
+LEFT JOIN 
+    block b2 ON s.exam_block_id = b2.id
+LEFT JOIN 
+    district d2 ON s.exam_district_id = d2.id;
+
+/--------
+My final query using Left Join
+SELECT s.id, s.name, s.f_name, s.class, s.class_group, s.vill_city, s.block, s.district, s.mobile, s.whatsapp, s.aadhar, s.dob, s.inst_type, i.inst_name, i.ssse_code, i.inst_incharge, b1.bname AS inst_block, d1.dname AS inst_dist, b2.bname AS exam_bock, d2.dname AS exam_dist, s.trans_id, s.pay_status, s.sub_date
+FROM students s
+LEFT JOIN institute i ON s.inst_name = i.inst_id
+LEFT JOIN block b1 ON i.b_id = b1.b_id
+LEFT JOIN district d1 ON b1.d_id = d1.d_id
+LEFT JOIN block b2 ON s.exam_block = b2.b_id
+LEFT JOIN district d2 ON b2.d_id = d2.d_id
+WHERE s.id = 7;
+
+---
+for web API 
+SELECT 
+    s.*, 
+    i.inst_name, i.ssse_code, i.inst_incharge,
+    b1.bname AS inst_block, d1.dname AS inst_dist,
+    b2.bname AS exam_block, d2.dname AS exam_dist
+FROM students s
+LEFT JOIN institute i ON s.inst_name = i.inst_id
+LEFT JOIN block b1     ON i.b_id = b1.b_id
+LEFT JOIN district d1  ON b1.d_id = d1.d_id
+LEFT JOIN block b2     ON s.exam_block = b2.b_id
+LEFT JOIN district d2  ON b2.d_id = d2.d_id
+WHERE s.id = 7;

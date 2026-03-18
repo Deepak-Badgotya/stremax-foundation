@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSSE Code Testing</title>
+</head>
+
+<body>
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        #userSSSECode {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .code-preview {
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .generated-code {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 8px;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .error-message {
+            min-height: 20px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        #ssseError {
+            transition: all 0.3s ease;
+        }
+
+        .valid {
+            border-color: #48c774 !important;
+            background-color: rgba(72, 199, 116, 0.05);
+        }
+
+        .invalid {
+            border-color: #ff3860 !important;
+            background-color: rgba(255, 56, 96, 0.05);
+        }
+
+        #submitBtn {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        #submitBtn:hover {
+            background: linear-gradient(135deg, #357abd 0%, #2a6099 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #submitBtn:active {
+            transform: translateY(0);
+        }
+    </style>
+
+    <form id="registrationForm">
+        <!-- District and Block Selection -->
+        <div class="form-group">
+            <label for="districtSelect">District *</label>
+            <select id="districtSelect" name="district" required>
+                <option value="">Select District</option>
+                <option value="jaipur">Jaipur</option>
+                <option value="udaipur">Udaipur</option>
+                <option value="jodhpur">Jodhpur</option>
+                <option value="ajmer">Ajmer</option>
+                <option value="kota">Kota</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="blockSelect">Block *</label>
+            <select id="blockSelect" name="block" required disabled>
+                <option value="">Select Block</option>
+            </select>
+        </div>
+
+        <!-- Generated SSSE Code Preview (District-Block part only) -->
+        <div id="ssseCodePreview" class="code-preview" style="display: none;">
+            <strong>Your SSSE Code Base:</strong>
+            <div id="generatedSSSE" class="generated-code"></div>
+            <small class="hint">District-Block Code: <span id="districtBlockCode"></span> + Your 3-digit Institution
+                Code</small>
+        </div>
+
+        <!-- User Input for Complete SSSE Code -->
+        <div class="form-group">
+            <label for="userSSSECode">Enter Complete SSSE Code *</label>
+            <input type="text" id="userSSSECode" name="ssse_code" placeholder="e.g., JAIGOP02005 (8 chars + 3 digits)"
+                maxlength="11" required pattern="[A-Z]{6}[0-9]{2}[0-9]{3}"
+                title="Format: 6 uppercase letters + 2 digits + 3 digits">
+            <div id="ssseError" class="error-message"></div>
+            <small class="hint">
+                Format: <strong id="formatHint"></strong> + <span style="color: #9b59b6;">Your 3-digit Institution
+                    Code</span>
+            </small>
+        </div>
+
+        <!-- Hidden field for auto-generated district-block part -->
+        <input type="hidden" id="districtBlockPart" name="district_block_part">
+
+        <!-- Other form fields -->
+        <div class="form-group">
+            <label for="institutionName">Institution Name *</label>
+            <input type="text" id="institutionName" name="institution_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="principalName">Principal Name *</label>
+            <input type="text" id="principalName" name="principal_name" required>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Registration</button>
+    </form>
+    
+
+    <script>
+        // District-Block data
+        const districtBlocks = {
+            jaipur: [{ n: "Gopalpura", c: "02" }, { n: "Amer", c: "05" }],
+            udaipur: [{ n: "Girwa", c: "01" }, { n: "Kotra", c: "04" }]
+        };
+
+        // DOM Elements
+        const districtSelect = document.getElementById('districtSelect');
+        const blockSelect = document.getElementById('blockSelect');
+        const ssseInput = document.getElementById('userSSSECode');
+        const errorDiv = document.getElementById('ssseError');
+        const previewDiv = document.getElementById('ssseCodePreview');
+
+        // Generate district-block code
+        const generateCode = (district, blockName, blockCode) =>
+            `${district.slice(0, 3).toUpperCase()}${blockName.slice(0, 3).toUpperCase()}${blockCode.padStart(2, '0')}`;
+
+        // Validate SSSE code
+        const validateSSSE = (input, expected) => {
+            if (!input || input.length !== 11) return { valid: false, msg: 'Code must be 11 characters' };
+            if (!/^[A-Z]{6}\d{5}$/.test(input)) return { valid: false, msg: 'Format: 6 letters + 5 digits' };
+            if (input.slice(0, 8) !== expected) return { valid: false, msg: `District-Block mismatch. Expected: ${expected}XXX` };
+            if (!/^\d{3}$/.test(input.slice(8))) return { valid: false, msg: 'Institution code must be 3 digits' };
+            return { valid: true, institution: input.slice(8) };
+        };
+
+        // Update block dropdown
+        districtSelect.onchange = () => {
+            const district = districtSelect.value;
+            blockSelect.innerHTML = '<option value="">Select Block</option>';
+            blockSelect.disabled = !district;
+
+            if (district && districtBlocks[district]) {
+                districtBlocks[district].forEach(b => {
+                    blockSelect.innerHTML += `<option value="${b.n}|${b.c}">${b.n} (${b.c})</option>`;
+                });
+            }
+
+            previewDiv.style.display = 'none';
+            ssseInput.value = '';
+            errorDiv.textContent = '';
+        };
+
+        // Update preview and validate
+        blockSelect.onchange = () => {
+            if (!blockSelect.value) return;
+
+            const [blockName, blockCode] = blockSelect.value.split('|');
+            const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+            const districtBlockCode = generateCode(districtName, blockName, blockCode);
+
+            // Show preview
+            previewDiv.innerHTML = `
+    <div style="margin:10px 0;font-weight:bold">
+      Your Code Base: <span style="color:#007bff">${districtBlockCode}</span> + Your 3-digit Institution Code
+    </div>
+    <small style="color:#666">Example: ${districtBlockCode}<span style="color:#9b59b6">XXX</span></small>
+  `;
+            previewDiv.style.display = 'block';
+
+            // Store for validation
+            blockSelect.dataset.expected = districtBlockCode;
+
+            // Focus input
+            ssseInput.focus();
+        };
+
+        // Real-time validation
+        ssseInput.oninput = () => {
+            ssseInput.value = ssseInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const expected = blockSelect.dataset.expected;
+
+            if (!expected || ssseInput.value.length < 8) {
+                errorDiv.textContent = '';
+                return;
+            }
+
+            const result = validateSSSE(ssseInput.value, expected);
+
+            if (result.valid) {
+                errorDiv.textContent = '✓ Valid';
+                errorDiv.style.color = '#28a745';
+                ssseInput.style.borderColor = '#28a745';
+            } else {
+                errorDiv.textContent = result.msg;
+                errorDiv.style.color = '#dc3545';
+                ssseInput.style.borderColor = '#dc3545';
+            }
+        };
+
+        // Form submission
+        document.getElementById('registrationForm').onsubmit = (e) => {
+            e.preventDefault();
+            const expected = blockSelect.dataset.expected;
+
+            if (!expected) {
+                alert('Please select district and block first');
+                return;
+            }
+
+            const result = validateSSSE(ssseInput.value, expected);
+
+            if (result.valid) {
+                // Add institution code to form data
+                const institutionInput = document.createElement('input');
+                institutionInput.type = 'hidden';
+                institutionInput.name = 'institution_code';
+                institutionInput.value = result.institution;
+                e.target.appendChild(institutionInput);
+
+                // Submit form
+                console.log('Submitting:', {
+                    ssse: ssseInput.value,
+                    institution: result.institution,
+                    district: districtSelect.value,
+                    block: blockSelect.value
+                });
+
+                alert(`Registration successful!\nInstitution Code: ${result.institution}`);
+                // e.target.submit(); // Uncomment for actual submission
+            } else {
+                alert(`Validation failed:\n${result.msg}`);
+            }
+        };
+    </script>
+</body>
+
+</html>

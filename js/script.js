@@ -4,63 +4,6 @@ function numberonly(input) {
   input.value = input.value.replace(num, "");
 }
 
-/* ===== SSSE Verification with institute address =====*/
-// District-Block data
-/*const districtBlocks = {
-  jaipur: [
-    { n: "Gopalpura", c: "02" },
-    { n: "Amer", c: "05" },
-  ],
-  udaipur: [
-    { n: "Girwa", c: "01" },
-    { n: "Kotra", c: "04" },
-  ],
-};
-
-// DOM Elements
-const instDistrictSelect = document.getElementById("inst_dist");
-const instBlockSelect = document.getElementById("inst_block");
-const ssseInput = document.getElementById("userSSSECode");
-const errorDiv = document.getElementById("ssseError");
-const previewDiv = document.getElementById("ssseCodePreview");
-
-// Generate district-block code
-const generateCode = (district, blockName, blockCode) =>
-  `${district.slice(0, 3).toUpperCase()}${blockName.slice(0, 3).toUpperCase()}${blockCode.padStart(2, "0")}`;
-
-// Validate SSSE code
-const validateSSSE = (input, expected) => {
-  if (!input || input.length !== 11)
-    return { valid: false, msg: "Code must be 11 characters" };
-  if (!/^[A-Z]{6}\d{5}$/.test(input))
-    return { valid: false, msg: "Format: 6 letters + 5 digits" };
-  if (input.slice(0, 8) !== expected)
-    return {
-      valid: false,
-      msg: `District-Block mismatch. Expected: ${expected}XXX`,
-    };
-  if (!/^\d{3}$/.test(input.slice(8)))
-    return { valid: false, msg: "Institution code must be 3 digits" };
-  return { valid: true, institution: input.slice(8) };
-};
-
-// Update block dropdown
-districtSelect.onchange = () => {
-  const district = districtSelect.value;
-  blockSelect.innerHTML = '<option value="">Select Block</option>';
-  blockSelect.disabled = !district;
-
-  if (district && districtBlocks[district]) {
-    districtBlocks[district].forEach((b) => {
-      blockSelect.innerHTML += `<option value="${b.n}|${b.c}">${b.n} (${b.c})</option>`;
-    });
-  }
-
-  previewDiv.style.display = "none";
-  ssseInput.value = "";
-  errorDiv.textContent = "";
-};
-
 /* Form Validations */
 function validateTenDigits(inputString) {
   const regex = /^\d{10}$/; // Matches exactly 10 digits
@@ -84,6 +27,7 @@ let selectData = {
 // 2. Short reusable function to get data and update global object
 const updateSelect = (id, key, globalKey) => {
   const el = document.getElementById(id);
+  if (!el) return;
   el.addEventListener("change", (e) => {
     const opt = e.target.options[e.target.selectedIndex];
 
@@ -132,12 +76,13 @@ document
 
     const inst_type = document.getElementById("inst_type").value.trim();
     const inst_name = document.getElementById("inst_name").value.trim();
-    const ssse_code = document.getElementById("ssse_code").value.trim();
+    const inst_add = document.getElementById("inst_vill").value.trim();
 
     const inst_vill = document.getElementById("inst_vill").value.trim();
     const inst_dist = document.getElementById("inst_dist").value.trim();
     const inst_block = document.getElementById("inst_block").value.trim();
 
+    const ssse_code = document.getElementById("ssse_code").value.trim();
     const ssse_incharge = document.getElementById("ssse_incharge").value.trim();
 
     const exam_district = document.getElementById("exam_district").value;
@@ -155,8 +100,28 @@ document
     if (!district) errors.push("District is required.");
     if (!mobile) errors.push("Mobile no is required.");
     if (!whatsapp) errors.push("Whatsapp no is required.");
-    if (!exam_district) errors.push("Exam district is required.");
-    if (!exam_block) errors.push("Exam Block is required.");
+
+    if (!dob) errors.push("DOB no is required.");
+    if (!inst_type) errors.push("Institute type no is required.");
+    if (!inst_name) errors.push("Institute name no is required.");
+    if (!inst_add) errors.push("Institute address no is required.");
+    if (!inst_dist) errors.push("Institute district no is required.");
+    if (!inst_block) errors.push("Institute block no is required.");
+    if (!ssse_code) errors.push("SSSE Code is required.");
+    if (!ssse_incharge) errors.push("SSSE Incharge is required.");
+
+    // 1. Define your "Ignore Validation" condition
+    const isNotApplicable =
+      ssse_code === "Not Applicable" && ssse_incharge === "Not Applicable";
+
+    if (!isNotApplicable) {
+      if (!exam_district) {
+        errors.push("Exam district is required.");
+      }
+      if (!exam_block) {
+        errors.push("Exam Block is required.");
+      }
+    }
 
     if (mobile && !validateTenDigits(mobile))
       errors.push("Mobile no must be 10 digits.");
@@ -168,6 +133,7 @@ document
       errors.push("Whatsapp must contain only numbers.");
 
     if (errors.length > 0) {
+      event.preventDefault();
       document.getElementById("errorMessages").innerHTML = errors
         .map((error) => `<p class="error">${error}</p>`)
         .join("");
@@ -230,6 +196,7 @@ document
 
         if (isNewInst) {
           console.log("Payment nhi hoga, nya h");
+          newInstForm(formData);
         } else {
           //console.log("Payment hoga hi hoga, phle se h");
           cashfreePayment(formData);
@@ -291,6 +258,28 @@ function cashfreePayment(data) {
     })
     .catch((err) => {
       console.error("Error during order creation:", err);
+      alert("Something went wrong. Please try again.");
+    });
+}
+
+// Function for new inst form submission
+function newInstForm(data) {
+  fetch("assets/direct_form_sub.php", {
+    method: "POST",
+    body: JSON.stringify({ customer_id: data.mobile, ...data }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      const customerId = data.id;
+      console.log(customerId);
+      if (customerId) {
+        // REDIRECT with customer ID to form_print.php
+        window.location.href = `direct_print.php?customer_id=${encodeURIComponent(customerId)}`;
+      }
+    })
+    .catch((err) => {
+      console.error("Error during form submission:", err);
       alert("Something went wrong. Please try again.");
     });
 }
@@ -429,11 +418,10 @@ function fetchInst(b_id, instituteClass = "institute1") {
             option.value = institute.inst_id;
             option.textContent = institute.inst_name;
             option.dataset.inst_name = institute.inst_name || "";
+            option.dataset.inst_type = institute.inst_type || "";
             option.dataset.ssse_code = institute.ssse_code || "";
             option.dataset.inst_incharge = institute.inst_incharge || "";
-
-            // Store additional data if needed
-            option.dataset.address = institute.address || "";
+            option.dataset.inst_add = institute.inst_add || "";
 
             dropdown.appendChild(option);
           });
@@ -497,19 +485,26 @@ function fetchInst(b_id, instituteClass = "institute1") {
 function displayInstDet(data) {
   document.querySelectorAll(".institute1").value = data.inst_name;
   document.getElementById("ssse_code").value = data.ssse_code;
+  document.getElementById("inst_type").value = data.inst_type;
   document.getElementById("ssse_incharge").value = data.inst_incharge;
+  document.getElementById("inst_vill").value = data.inst_add;
 }
 
 // Function to save new institute-------------
 function saveNewInstitute() {
+  // hide exam district & block
+  document.getElementById("ex_dis").style.display = "none";
+  document.getElementById("ex_blo").style.display = "none";
+  document.getElementById("ex_h6").style.display = "none"; 
   const b_id = document.getElementById("inst_block").value;
   const instituteName = document.getElementById("new_institute_name").value;
+  const instituteType = document.getElementById("new_institute_type").value;
   const instituteAddress = document.getElementById(
     "new_institute_address",
   ).value;
 
-  if (!instituteName) {
-    alert("Please enter institute name");
+  if (!instituteName || !instituteType || !instituteAddress) {
+    alert("Please fill required fields");
     return;
   }
 
@@ -526,6 +521,7 @@ function saveNewInstitute() {
     body: JSON.stringify({
       b_id: b_id,
       name: instituteName,
+      type: instituteType,
       address: instituteAddress,
       // Add other fields as needed
     }),
@@ -534,22 +530,30 @@ function saveNewInstitute() {
     .then((data) => {
       if (data.success) {
         alert("Institute added successfully!");
+        console.log(data);
 
         // Add the new institute to dropdown
         const inst_name = document.getElementById("inst_name");
+        const inst_add = document.getElementById("inst_vill");
+        const inst_type = document.getElementById("inst_type");
         const newOption = document.createElement("option");
         newOption.value = data.inst_id;
         newOption.textContent = instituteName;
         // 1. SET THE DATA ATTRIBUTE (Important: This is what your listener reads)
         newOption.dataset.inst_name = instituteName;
+        newOption.dataset.inst_type = data.inst_type;
+        newOption.dataset.inst_add = data.inst_add;
         newOption.dataset.ssse_code = "Not Applicable";
         newOption.dataset.inst_incharge = "Not Applicable";
 
         // 2. Insert before "Other" option
         inst_name.insertBefore(newOption, inst_name.lastElementChild);
 
+        console.log(newOption.dataset.inst_type);
         // 3. Select the new institute
         inst_name.value = data.inst_id;
+        inst_type.value = data.inst_type;
+        inst_add.value = data.inst_add;
 
         // 4. TRIGGER THE CHANGE EVENT (This "wakes up" your event listener)
         inst_name.dispatchEvent(new Event("change"));
@@ -561,6 +565,7 @@ function saveNewInstitute() {
         // Clear form
         document.getElementById("new_institute_name").value = "";
         document.getElementById("new_institute_address").value = "";
+        document.getElementById("new_institute_type").value = "";
       } else {
         alert("Error: " + data.message);
       }
