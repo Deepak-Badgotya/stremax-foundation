@@ -168,6 +168,14 @@ $conn->close();
             text-decoration: none;
             cursor: pointer;
         }
+
+        #back-btn {
+            padding: .5rem;
+            border-radius: 0.5rem;
+            color: white;
+            background-color: #006F47;
+            display: none;
+        }
     </style>
     <!-- Print Style-->
     <style media="print" type="text/css">
@@ -196,7 +204,7 @@ $conn->close();
             width: 104px;
         }
 
-        #print-div {
+        #print-div, #back-btn {
             display: none !important;
         }
     </style>
@@ -209,6 +217,7 @@ $conn->close();
                     <p>Print/Save</p>
                     <img src="img/printer.svg" alt="">
                 </a>
+                <a href="register.php" id="back-btn" class="flex center">Back to Home</a>
             </div>
             <!-- Header -->
             <div class="header text-center">
@@ -251,7 +260,7 @@ $conn->close();
                 <!-- Village/City - Block -->
                 <div class="row">
                     <div class="row-left">
-                        <p>Village/City:</p>
+                        <p>Village/Town:</p>
                         <p><?php echo htmlspecialchars($studentData['vill_city'] ?? 'N/A'); ?></p>
                     </div>
                     <div class="row-right">
@@ -266,18 +275,18 @@ $conn->close();
                         <p><?php echo htmlspecialchars($studentData['district'] ?? 'N/A'); ?></p>
                     </div>
                     <div class="row-right">
-                        <p>Mobile:</p>
+                        <p>Mobile/Calling No.:</p>
                         <p><?php echo htmlspecialchars($studentData['mobile'] ?? 'N/A'); ?></p>
                     </div>
                 </div>
                 <!-- Whatsapp - Aadhar -->
                 <div class="row">
                     <div class="row-left">
-                        <p>Whatsapp:</p>
+                        <p>Whatsapp No.:</p>
                         <p><?php echo htmlspecialchars($studentData['whatsapp'] ?? 'N/A'); ?></p>
                     </div>
                     <div class="row-right">
-                        <p>Aadhar:</p>
+                        <p>Aadhar No.:</p>
                         <p><?php echo htmlspecialchars($studentData['aadhar'] ?? 'N/A'); ?></p>
                     </div>
                 </div>
@@ -310,33 +319,22 @@ $conn->close();
                         <p><?php echo htmlspecialchars($studentData['inst_type'] ?? 'N/A'); ?></p>
                     </div>
                 </div>
-                <!-- Institue Village - Institute Block -->
+                <!-- Institue Name - SSSE Code -->
                 <div class="row">
                     <div class="row-left">
-                        <p>Institue Village:</p>
-                        <p><?php echo htmlspecialchars($studentData['inst_vill'] ?? 'N/A'); ?></p>
+                        <p>Institue Name:</p>
+                        <p><?php echo htmlspecialchars($studentData['institute_name'] ?? 'N/A'); ?></p>
                     </div>
                     <div class="row-right">
-                        <p>Institute Block:</p>
-                        <p><?php echo htmlspecialchars($studentData['institute_block'] ?? 'N/A'); ?></p>
-                    </div>
-                </div>
-                <!-- SSSE Code - SSSE Incharge -->
-                <div id="ssse" class="row">
-                    <div class="row-left">
                         <p>SSSE Code:</p>
                         <p><?php echo htmlspecialchars($studentData['ssse_code'] ?? 'N/A'); ?></p>
                     </div>
-                    <div class="row-right">
+                </div>
+                <!-- SSSE Incharge - Date Of Submission  -->
+                <div id="ssse" class="row">
+                    <div class="row-left">
                         <p>SSSE Incharge:</p>
                         <p><?php echo htmlspecialchars($studentData['inst_incharge'] ?? 'N/A'); ?></p>
-                    </div>
-                </div>
-                <!-- Institute District - Date -->
-                <div class="row">
-                    <div class="row-left">
-                        <p>Institute District:</p>
-                        <p><?php echo htmlspecialchars($studentData['institute_district'] ?? 'N/A'); ?></p>
                     </div>
                     <div class="row-right">
                         <p>Date Of Submission:</p>
@@ -459,6 +457,13 @@ $conn->close();
             </div>
         </div>
     </main>
+
+    <!-- Back button script-->
+    <script>
+        document.getElementById("print-div").addEventListener("click", function (event) {
+            document.getElementById("back-btn").style.display = "block";
+        })
+    </script>
 </body>
 
 </html>

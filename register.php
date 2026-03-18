@@ -104,15 +104,15 @@ $showAlert = false;
                             <!-- Candidate's Name-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Candidate's Name:</h6>
+                                    <h6>Candidate Name:</h6>
                                     <input name="name" id="name" type="text" placeholder="Name" required>
                                 </div>
                             </div>
-                            <!-- Father's Name-->
+                            <!-- Father Name-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Father's Name:</h6>
-                                    <input name="f_name" id="f_name" type="text" placeholder="Father's Name" required>
+                                    <h6>Father Name:</h6>
+                                    <input name="f_name" id="f_name" type="text" placeholder="Father Name" required>
                                 </div>
                             </div>
                             <!-- Class-->
@@ -138,7 +138,7 @@ $showAlert = false;
                             <!-- Class Group-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Group:</h6>
+                                    <h6>Class Group:</h6>
                                     <select name="class_group" class="nice-select form-control wide" id="class_group"
                                         required>
                                         <option value="">Select Your Group</option>
@@ -150,11 +150,11 @@ $showAlert = false;
                             </div>
                             <!-- CANDIDATE ADDRESS -->
                             <h6 class="col-12">Candidate Address:</h6>
-                            <!-- Village/City-->
+                            <!-- Village/Town-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Village/City:</h6>
-                                    <input name="vil_city" id="vil_city" type="text" placeholder="Your Village/City"
+                                    <h6>Village/Town:</h6>
+                                    <input name="vil_city" id="vil_city" type="text" placeholder="Your Village/Town"
                                         required>
                                 </div>
                             </div>
@@ -205,35 +205,35 @@ $showAlert = false;
                                         placeholder="Date Of Birth" required>
                                 </div>
                             </div>
-                            <!-- INSTITUTION DETAILS -->
+                            <!-- INSTITUTE DETAILS -->
                             <h6 class="col-12">Institute Details:</h6>
-                            <!-- District-->
+                            <!-- Institute District-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>District:</h6>
+                                    <h6>Institute District:</h6>
                                     <select name="inst_dist" class="nice-select form-control wide districts"
                                         id="inst_dist" data-target-block="blocks1" required>
-                                        <option value="">--Select a District--</option>
+                                        <option value="">--Select Institute  District--</option>
                                     </select>
                                 </div>
                             </div>
-                            <!-- Block-->
+                            <!-- Institute Block-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Block:</h6>
+                                    <h6>Institute Block:</h6>
                                     <select name="inst_block" class="nice-select form-control wide blocks blocks1"
                                         id="inst_block" disabled data-target-institute="institute1" required>
-                                        <option value="">Select Block</option>
+                                        <option value="">Select Institute Block</option>
                                     </select>
                                 </div>
                             </div>
                             <!-- Institution Name-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6>Institution Name:</h6>
+                                    <h6>Institute Name:</h6>
                                     <select name="inst_name" class="nice-select form-control wide institute institute1"
                                         id="inst_name" disabled required>
-                                        <option value="">Select Institution</option>
+                                        <option value="">Select Institute</option>
                                     </select>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@ $showAlert = false;
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
                                     <h6>Village/Town:</h6>
-                                    <input name="inst_vill" id="inst_vill" type="text" placeholder="Your Village"
+                                    <input name="inst_vill" id="inst_vill" type="text" placeholder="Your Institute Village"
                                         disabled required>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@ $showAlert = false;
                             <!-- Institution Type-->
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-group">
-                                    <h6 id="test">Institution Type:</h6>
+                                    <h6 id="test">Institute Type:</h6>
                                     <input name="inst_type" id="inst_type" type="text" placeholder="Your Institute Type"
                                         disabled required>
                                 </div>
