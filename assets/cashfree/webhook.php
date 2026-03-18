@@ -1,33 +1,7 @@
 <?php
-// Old code
-/* require_once "../connect.php";
+ require_once "../connect.php";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    //Get current timestamp
-    $timestamp = date("Y-m-d H:i:s");
-
-    //Define log file
-    $logFile = "webhook.log"; 
-
-    // Decode JSON data recieved from webhook
-    $postData = json_decode(file_get_contents("php://input"), true);
-
-    // Prepare POST data for logging
-    $postDataString = (string)$timestamp. "\n" . json_encode($postData) . "\n\n";
-
-    // Write POST data to logfile
-    file_put_contents($logFile, $postDataString, FILE_APPEND | LOCK_EX);
-} else {
-    // Log if no post data recieved
-    $logFile = "webhook.log";
-    $message = "No POST data recieved.\n";
-    file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX);
-}
- */
-
-require_once "../connect.php";
-
-$clientSecret = "cfsk_ma_test_f19b40721d04e9dbd81de6986be7f6bc_c5295e3c";
+$clientSecret = "Secret Key";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $headers = getallheaders();

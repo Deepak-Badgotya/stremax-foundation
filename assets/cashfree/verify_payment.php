@@ -29,9 +29,9 @@ if (!$orderId) {
 
 // ---------- Config ----------
 
-$clientId = 'TEST1039176924c6c5fe29d5d36b2fee96719301';
-$clientSecret = 'cfsk_ma_test_f19b40721d04e9dbd81de6986be7f6bc_c5295e3c';
-$apiVersion = '2025-01-01';
+$clientId = 'APP ID';
+$clientSecret = 'Secret Key';
+$apiVersion = 'API Version';
 $apiUrl = "https://sandbox.cashfree.com/pg/orders/$orderId";
 
 // ---------- Logger ----------
