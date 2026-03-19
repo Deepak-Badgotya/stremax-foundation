@@ -31,7 +31,7 @@
 										<li><a href="about.php">About </a></li>
 										<li><a href="contact.php">Contact Us</a></li>
 										<li><a href="gallery.php">Gallery </a></li>
-										<li><a href="quiz-JGP.php">Quiz </a></li>
+										<li><a href="quiz.php">Quiz </a></li>
 									</ul>
 								</nav>
 							</div>

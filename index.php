@@ -115,11 +115,11 @@
 		<div class="container">
 			<div class="row form-link">
 				<div class="col-lg-6 col-12">
-					<h5> ' झारखण्ड ज्ञान प्रतियोगिता - 2025 ' </h5>
+					<h5> ' Stremax State Scholarship Exam - 2026 ' </h5>
 				</div>
 				<div class="col-lg-6 col-12" style="text-align: center; color: #fff;">
-					<a href="JGP 2025 Group A Result.pdf" class="btn" download="JGP 2025 Group A Result.pdf">Result Group A </a>
-					<a href="JGP 2025 Group B Result.pdf" class="btn" download="JGP 2025 Group B Result.pdf">Result Group B</a>
+					<a href="quiz.php" class="btn">Apply Now </a>
+					<a href="stremax-state-scholarship-exam-2026-brochure.pdf" class="btn" download="stremax-state-scholarship-exam-2026-brochure.pdf">Download Brochure</a>
 				</div>
 			</div>
 		</div>
