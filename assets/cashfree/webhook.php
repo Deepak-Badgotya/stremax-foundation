@@ -1,7 +1,7 @@
 <?php
  require_once "../connect.php";
 
-$clientSecret = "Secret Key";
+$clientSecret = "cfsk_ma_prod_0c6ecd97d3a25e95060ffdec5b4cdd82_8ed72881";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $headers = getallheaders();

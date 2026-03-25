@@ -309,9 +309,9 @@ $showAlert = false;
                             </div>
                             <div id="institute_details"></div>
                             <!-- PREFERRED EXAM CENTRE DETAILS -->
-                            <h6 id="ex_h6" class="col-12">Preferred Exam Centre Details:</h6>
+                            <h6 id="ex_h6" class="col-12 exams">Preferred Exam Centre Details:</h6>
                             <!--Exam District-->
-                            <div id="ex_dis" class="col-lg-6 col-md-6 col-12">
+                            <div id="ex_dis" class="col-lg-6 col-md-6 col-12 exams">
                                 <div class="form-group">
                                     <h6>Choose Exam District:</h6>
                                     <select name="exam_district" class="nice-select form-control wide districts"
@@ -321,7 +321,7 @@ $showAlert = false;
                                 </div>
                             </div>
                             <!-- Exam Block-->
-                            <div id="ex_blo" class="col-lg-6 col-md-6 col-12">
+                            <div id="ex_blo" class="col-lg-6 col-md-6 col-12 exams">
                                 <div class="form-group">
                                     <h6>Choose Exam Block:</h6>
                                     <select name="exam_block" class="nice-select form-control wide blocks blocks2"
@@ -345,6 +345,7 @@ $showAlert = false;
                 </div>
             </div>
             <div id="errorMessages"></div>
+            <div id="aadharErr"><p>This aadhar no is already exist. Please check your aadhar number.</p></div>
             <!-- Start Pop up-->
             <div id="confirmationPopup" class="popup">
                 <div class="popup-content">

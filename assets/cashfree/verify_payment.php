@@ -29,10 +29,10 @@ if (!$orderId) {
 
 // ---------- Config ----------
 
-$clientId = 'APP ID';
-$clientSecret = 'Secret Key';
-$apiVersion = 'API Version';
-$apiUrl = "https://sandbox.cashfree.com/pg/orders/$orderId";
+$clientId = '8420072250b7c4da59170b74bb700248';
+$clientSecret = 'cfsk_ma_prod_0c6ecd97d3a25e95060ffdec5b4cdd82_8ed72881';
+$apiVersion = '2023-08-01';
+$apiUrl = "https://api.cashfree.com/pg/orders/$orderId";
 
 // ---------- Logger ----------
 function logMessage($message)

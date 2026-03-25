@@ -52,7 +52,7 @@ function checkGlobals() {
 }
 
 // Initialize Cashfree (use "sandbox" for testing, "production" for live)
-const cashfree = Cashfree({ mode: "sandbox" });
+const cashfree = Cashfree({ mode: "production" });
 
 // Form submission
 document
@@ -195,10 +195,8 @@ document
           formData.ssse_incharge === "Not Applicable";
 
         if (isNewInst) {
-          console.log("Payment nhi hoga, nya h");
           newInstForm(formData);
         } else {
-          //console.log("Payment hoga hi hoga, phle se h");
           cashfreePayment(formData);
         }
       });
@@ -222,6 +220,21 @@ function cashfreePayment(data) {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
+      if (data.success === false) {
+        document.getElementById("confirmationPopup").style.display = "none";
+        aadharErr.innerHTML = "";
+        aadharErr.innerHTML = `
+                <p>Aadhar no is already exist. Please check your aadhar no.</p>
+            `;
+        aadharErr.style.display = "block";
+        document.getElementById("myForm").reset();
+        if (aadharErr) {
+          setTimeout(() => {
+            aadharErr.style.display = "none";
+          }, 8000);
+        }
+        return;
+      }
       if (!data.payment_session_id) {
         alert("Failed to create payment session. Please try again.");
         return;
@@ -264,6 +277,7 @@ function cashfreePayment(data) {
 
 // Function for new inst form submission
 function newInstForm(data) {
+  const aadharErr = document.getElementById("aadharErr"); // Clear previous errors
   fetch("assets/direct_form_sub.php", {
     method: "POST",
     body: JSON.stringify({ customer_id: data.mobile, ...data }),
@@ -272,10 +286,22 @@ function newInstForm(data) {
     .then((data) => {
       console.log(data);
       const customerId = data.id;
-      console.log(customerId);
       if (customerId) {
         // REDIRECT with customer ID to form_print.php
         window.location.href = `direct_print.php?customer_id=${encodeURIComponent(customerId)}`;
+      } else {
+        document.getElementById("confirmationPopup").style.display = "none";
+        aadharErr.innerHTML = "";
+        aadharErr.innerHTML = `
+                <p>Aadhar no is already exist. Please check your aadhar no.</p>
+            `;
+        aadharErr.style.display = "block";
+        document.getElementById("myForm").reset();
+        if (aadharErr) {
+          setTimeout(() => {
+            aadharErr.style.display = "none";
+          }, 8000);
+        }
       }
     })
     .catch((err) => {
@@ -484,10 +510,22 @@ function fetchInst(b_id, instituteClass = "institute1") {
 // New function to display complete institute details
 function displayInstDet(data) {
   document.querySelectorAll(".institute1").value = data.inst_name;
-  document.getElementById("ssse_code").value = data.ssse_code;
+  const ssse_code = (document.getElementById("ssse_code").value =
+    data.ssse_code);
   document.getElementById("inst_type").value = data.inst_type;
-  document.getElementById("ssse_incharge").value = data.inst_incharge;
+  const ssse_incharge = (document.getElementById("ssse_incharge").value =
+    data.inst_incharge);
   document.getElementById("inst_vill").value = data.inst_add;
+  if (ssse_code === "Not Applicable" && ssse_incharge === "Not Applicable") {
+    document.querySelectorAll(".exams").forEach((el) => {
+      el.style.display = "none";
+    });
+  }
+  else {
+    document.querySelectorAll(".exams").forEach((el) => {
+      el.style.display = "block";
+    });
+  }
 }
 
 // Function to save new institute-------------
@@ -495,7 +533,7 @@ function saveNewInstitute() {
   // hide exam district & block
   document.getElementById("ex_dis").style.display = "none";
   document.getElementById("ex_blo").style.display = "none";
-  document.getElementById("ex_h6").style.display = "none"; 
+  document.getElementById("ex_h6").style.display = "none";
   const b_id = document.getElementById("inst_block").value;
   const instituteName = document.getElementById("new_institute_name").value;
   const instituteType = document.getElementById("new_institute_type").value;

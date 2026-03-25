@@ -8,10 +8,10 @@ include_once "../connect.php";
 
 $input = file_get_contents('php://input');
 
-/* if (empty($input)) {
+if (empty($input)) {
     echo json_encode(['status' => 'error', 'message' => 'No data received']);
     exit;
-} */
+}
 
 // FIX 1: Removed the 'echo' from this line
 $data = json_decode($input, true);
@@ -44,8 +44,7 @@ $numExsitsRow = mysqli_num_rows($result);
 
 if ($numExsitsRow > 0) {
     // Student already exists - Set error message
-    $showError = "Aadhar numbers Already Exists. Please check your aadhar numbers.";
-    header("Location: ../register.php?showError=" . urlencode($showError));
+    echo json_encode(["success" => false, "error" => "Aadhaar number already exists"]);
     exit;
 } else {
     if (
@@ -77,11 +76,11 @@ if ($numExsitsRow > 0) {
 
             function createCashfreeOrder($id, $name, $mobile, $amount)
             {
-                $appId = 'APP ID';
-                $secretKey = 'Secrect Key';
+                $appId = '8420072250b7c4da59170b74bb700248';
+                $secretKey = 'cfsk_ma_prod_0c6ecd97d3a25e95060ffdec5b4cdd82_8ed72881';
                 $orderId = generateUniqueOrderId();
 
-                $url = "https://sandbox.cashfree.com/pg/orders";
+                $url = "https://api.cashfree.com/pg/orders";
 
                 $payload = [
                     "order_id" => $orderId,
@@ -94,8 +93,8 @@ if ($numExsitsRow > 0) {
                         "customer_name" => $name
                     ],
                     "order_meta" => [
-                        // FIX 2: Using the recommended placeholder
-                        //"return_url" => "http://localhost/stremax-new/assets/cashfree/verify.html?txnId={order_id}&customer_id={customer_id}"
+                        // Production url
+                        //"return_url" => "https://stremaxfoundation.org/assets/cashfree/verify.html?txnId={order_id}"
                         "return_url" => "https://elle-noisy-carelessly.ngrok-free.dev/stremax-new/assets/cashfree/verify.html?txnId={order_id}"
                     ]
                 ];
@@ -139,7 +138,7 @@ if ($numExsitsRow > 0) {
                     "success" => true,
                     "order_id" => $response['order_id'],
                     "payment_session_id" => $response['payment_session_id'],
-                    "redirect_url" => $response['payments']['url'] ?? "https://sandbox.cashfree.com" . $response['payment_session_id']
+                    "redirect_url" => $response['payments']['url'] ?? "https://api.cashfree.com" . $response['payment_session_id']
                 ]);
                 exit;
             }

@@ -3863,6 +3863,20 @@ Pop up CSS
 	color: #2C2D3F;
 }
 
+#aadharErr {
+	display: none;
+	color: #fff;
+	background-color: #e13138;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	position: absolute;
+	right: 1rem;
+	top: 2rem;
+}
+#aadharErr p {
+	color: #fff !important;
+}
+
 /*=========================
    End Register CSS
 ===========================*/
