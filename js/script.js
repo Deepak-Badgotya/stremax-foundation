@@ -264,7 +264,7 @@ function cashfreePayment(data) {
           };
 
           window.location.href =
-            "https://elle-noisy-carelessly.ngrok-free.dev/stremax-new/assets/cashfree/verify.html?txnId=" +
+            "https://stremaxfoundation.org/assets/cashfree/verify.html?txnId=" +
             data.order_id;
         }
       });
